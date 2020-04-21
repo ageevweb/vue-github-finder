@@ -9,6 +9,14 @@
         )
         button.btn.btnPrimary(@click="getRepo") search
 
+        .repos
+          .repos__info(v-for="repo in repos" :key="repo.id")
+            .repo__item 
+              a.link( target="_blank" :href="repo.html_url") {{ repo.name }}
+              span ⭐ {{repo.stargazers_count}}
+
+
+
 
 </template>
 
@@ -24,6 +32,7 @@ export default {
   data () {
     return {
       search: '',
+      repos: null,
     }
   },
   methods: {
@@ -31,7 +40,7 @@ export default {
       axios
         .get(`https://api.github.com/users/${this.search}/repos`)
           .then(res => {
-            console.log(res.data)
+            this.repos = res.data
           })
           .catch(err => {
             console.log(err)
@@ -44,6 +53,8 @@ export default {
 
 
 <style lang="scss">
-
+  .container{
+    padding: 0 15px;
+  }
   
 </style>
