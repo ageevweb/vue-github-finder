@@ -2,12 +2,17 @@
   .wrapper-content.wrapper-content--fixed
     section
       .container
+        .error(v-if="error")
+          h1 Can't find the user :(
         search(
           :value="search" 
           placeholder="type github's name..."
           @search="search = $event"
         )
         button.btn.btnPrimary(@click="getRepo") search
+
+        .users
+          
 
         .repos
           .repos__info(v-for="repo in repos" :key="repo.id")
@@ -33,6 +38,7 @@ export default {
     return {
       search: '',
       repos: null,
+      error: null,
     }
   },
   methods: {
@@ -40,10 +46,14 @@ export default {
       axios
         .get(`https://api.github.com/users/${this.search}/repos`)
           .then(res => {
-            this.repos = res.data
+            this.repos = res.data;
+            this.error = null;
+
           })
           .catch(err => {
-            console.log(err)
+            this.repos = null;
+            this.error = true;
+            console.log(err);
           })
     }
   }
@@ -55,6 +65,26 @@ export default {
 <style lang="scss">
   .container{
     padding: 0 15px;
+    max-width: 600px;
+  }
+  h1{
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .btn{
+    margin: 0 auto;
+    display: block !important;
+  }
+  .repo{
+    &__item{
+      display:flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      
+      span{
+        color: goldenrod;
+      }
+    }
   }
   
 </style>
