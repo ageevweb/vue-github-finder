@@ -11,8 +11,16 @@
         )
         button.btn.btnPrimary(@click="getRepo") search
 
-        .users
-          
+        .users(v-if="userInfo")
+          a.users__pic(:href="userInfo.html_url")
+            img(:src="userInfo.avatar_url")
+          .users__i
+            .users__login {{userInfo.login}}
+            .users__email {{userInfo.email}}
+            a.users__login(:href="userInfo.html_url") {{userInfo.html_url}}
+            .users__name {{userInfo.name}}
+            .users__location {{userInfo.location}}
+            .users__repos quantity of repos: {{repos.length}}
 
         .repos
           .repos__info(v-for="repo in repos" :key="repo.id")
@@ -36,26 +44,33 @@ export default {
 
   data () {
     return {
-      search: '',
+      search: 'github',
+      userInfo: null,
       repos: null,
       error: null,
     }
   },
   methods: {
     getRepo(){
-      axios
-        .get(`https://api.github.com/users/${this.search}/repos`)
-          .then(res => {
-            this.repos = res.data;
-            this.error = null;
 
-          })
-          .catch(err => {
-            this.repos = null;
-            this.error = true;
-            console.log(err);
-          })
-    }
+      let gitUser = new Promise((res, rej) =>{
+        axios
+          .get(`https://api.github.com/users/${this.search}`)
+            .then(data => {res(data);});
+      });
+
+      let gitUserRepos = new Promise((res, rej) =>{
+        axios
+          .get(`https://api.github.com/users/${this.search}/repos`)
+            .then(data => {res(data)});
+      });
+
+      Promise.all([gitUser, gitUserRepos]).then(value => {
+        this.error = null;
+        this.userInfo = value[0].data;
+        this.repos = value[1].data;
+      })
+    } 
   }
 
 }
@@ -65,7 +80,7 @@ export default {
 <style lang="scss">
   .container{
     padding: 0 15px;
-    max-width: 600px;
+    max-width: 600px !important;
   }
   h1{
     margin-bottom: 30px;
@@ -83,8 +98,29 @@ export default {
       
       span{
         color: goldenrod;
+        margin-left: 20px;
+        white-space: nowrap;
       }
+    }
+  }
+
+  .users{
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__pic{
+      max-width: 150px;
+      border: 2px solid #494ce8;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 30px;
     }
   }
   
 </style>
+
+
+
+
