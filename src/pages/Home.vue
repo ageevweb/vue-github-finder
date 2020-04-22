@@ -25,7 +25,7 @@
         .repos(v-if="repos")
           .repos__filter
             .filt-title(@click="sort('name')") title &#8593;&#8595;
-            .filt-stars(@click="sort('stargazers_count')") stars &#8593;&#8595;
+            .filt-title(@click="sort('stargazers_count')") stars &#8593;&#8595;
 
           .repos__info(v-for="repo in reposSort" :key="repo.id")
             .repos__item 
@@ -61,7 +61,7 @@ export default {
       }
     }
   },
-  
+
   methods: {
     getRepo(){
       let gitUser = new Promise((res, rej) =>{
