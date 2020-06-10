@@ -8,6 +8,7 @@
           :value="search" 
           placeholder="type github's name..."
           @search="search = $event"
+          @getRepo="getRepo"
         )
         button.btn.btnPrimary(@click="getRepo") search
 
